@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ptr="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:padding="5dp">
+        
+        <com.winds.app3dgame.customview.MainTitleFragmentViewPager
+            android:id="@+id/main_title_fragment_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </com.winds.app3dgame.customview.MainTitleFragmentViewPager>
+        <LinearLayout
+            android:id="@+id/main_title_fragment1_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:src="@drawable/dot_info"
+                android:padding="10dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:src="@drawable/dot_info"
+                android:padding="10dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:src="@drawable/dot_info"
+                android:padding="10dp"/>
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        android:id="@+id/main_title_fragment1_pulltorefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        ptr:ptrMode="both"/>
+
+</LinearLayout>
