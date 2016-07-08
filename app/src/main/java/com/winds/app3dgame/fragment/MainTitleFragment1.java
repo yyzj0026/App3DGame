@@ -10,18 +10,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.winds.app3dgame.AsyncTask.MainTitleFragment1AsyncTask;
 import com.winds.app3dgame.R;
+import com.winds.app3dgame.WebViewActivity;
 import com.winds.app3dgame.adapter.MainTitleFragment1Adapter;
 import com.winds.app3dgame.adapter.MainTitleFragment1ListViewAdapter;
 import com.winds.app3dgame.customview.MainTitleFragmentViewPager;
-import com.winds.app3dgame.dao.NewsDao;
 import com.winds.app3dgame.piccache.CacheManager;
 import com.winds.app3dgame.service.DownloadNewsService;
 
@@ -33,18 +33,18 @@ import java.util.List;
  * Created by Administrator on 2016/7/6.
  */
 @SuppressLint("ValidFragment")
-public class MainTitleFragment1 extends Fragment implements ViewPager.OnPageChangeListener,PullToRefreshBase.OnRefreshListener2{
+public class MainTitleFragment1 extends Fragment implements ViewPager.OnPageChangeListener,PullToRefreshBase.OnRefreshListener2,AdapterView.OnItemClickListener{
     private MainTitleFragmentViewPager viewPager;
     private LinearLayout ll;
-    private PullToRefreshListView pullToRefreshListView;
+    public static PullToRefreshListView pullToRefreshListView;
 
     private MainTitleFragment1Adapter viewPagerAdapter;
-    private MainTitleFragment1ListViewAdapter listViewAdapter;
+    public static MainTitleFragment1ListViewAdapter listViewAdapter;
 
     private List<ImageView> imgList;
     private ImageView[] imgDot;
     private int[] imgArray={R.drawable.default1, R.drawable.default2,R.drawable.default3};
-    private List<HashMap<String,Object>> articleList;
+    public static List<HashMap<String,Object>> articleList;
 
     private int currentIndex;
     private int pageIndex=1;
@@ -98,10 +98,13 @@ public class MainTitleFragment1 extends Fragment implements ViewPager.OnPageChan
         ListView listView=pullToRefreshListView.getRefreshableView();
         listViewAdapter=new MainTitleFragment1ListViewAdapter(articleList,getContext(),cacheManager);
         listView.setAdapter(listViewAdapter);   //listview也应该加监听
-        if(articleList==null){
-            Log.i("aaa","fragment1里articleList为空");
-        }
-        getInfo();
+        listView.setOnItemClickListener(this);
+
+        Intent intent=new Intent(getContext(), DownloadNewsService.class);
+        intent.putExtra("readInfo",true);
+        intent.putExtra("selectColumn",new String[]{"title","pubdate","feedback","litpic","arcurl"});
+        getContext().startService(intent);
+
 
         pullToRefreshListView.setOnRefreshListener(this);
     }
@@ -137,25 +140,33 @@ public class MainTitleFragment1 extends Fragment implements ViewPager.OnPageChan
     @Override
     public void onPullDownToRefresh(PullToRefreshBase refreshView) {   //这里进行刷新
         Log.i("aaa","文章部分碎片1刷新数据");
-        Intent intent2=new Intent(getContext(), DownloadNewsService.class);
-        intent2.putExtra("urlPath",1);
-        getContext().startService(intent2);
-        getInfo();
+        Intent intent1=new Intent(getContext(), DownloadNewsService.class);
+        intent1.putExtra("pageIndex",1);
+        intent1.putExtra("selectColumn",new String[]{"title","pubdate","feedback","litpic","arcurl"});
+        getContext().startService(intent1);
     }
 
     @Override
     public void onPullUpToRefresh(PullToRefreshBase refreshView) {   //这里加载下一页
         Log.i("aaa","文章部分碎片1读取下一页页面");
         Intent intent2=new Intent(getContext(), DownloadNewsService.class);
-        pageIndex+=1;
-        intent2.putExtra("pageIndex",pageIndex);
+        intent2.putExtra("pageIndex",++pageIndex);
+        intent2.putExtra("selectColumn",new String[]{"title","pubdate","feedback","litpic","arcurl"});
         getContext().startService(intent2);
-        getInfo();
 
     }
 
-    public void getInfo(){
-        MainTitleFragment1AsyncTask asyncTask=new MainTitleFragment1AsyncTask(articleList,getContext(),listViewAdapter,pullToRefreshListView);
-        asyncTask.execute("title","pubdate","feedback","litpic");
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        HashMap<String,Object> map= (HashMap<String, Object>) parent.getItemAtPosition(position);
+        String arcurl=map.get("arcurl").toString();
+        String title=map.get("title").toString();
+        Log.i("aaa","文章地址："+arcurl);
+        Log.i("aaa","文章标题："+title);
+
+        Intent intent3=new Intent(getContext(), WebViewActivity.class);
+        intent3.putExtra("arcurl",arcurl);
+        intent3.putExtra("title",title);
+        startActivity(intent3);
     }
 }

@@ -39,6 +39,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     Log.i("aaa","后台进行数据下载,启动service");
                     Intent intent=new Intent(WelcomeActivity.this, DownloadNewsService.class);
                     intent.putExtra("pageIndex",1);
+                    intent.putExtra("welcomePage",true);
                     startService(intent);
                 }
             }

@@ -98,12 +98,15 @@ public class NewsDao {
         return false;
     }
     public List<HashMap<String,Object>> getAllNewsList(String[] selectColumn) {
+        Log.i("aaa","执行查询");
         SQLiteDatabase db = null;
         Cursor cursor = null;
         List<HashMap<String,Object>> data = new ArrayList<HashMap<String,Object>>();
         try {
+
             db = helper.getReadableDatabase();
-            cursor=db.query("info",selectColumn,null,null,null,"desc",null);
+            cursor=db.query("info",selectColumn,null,null,null,null,"id desc");
+            Log.i("aaa","正在查询");
             while (cursor.moveToNext()) {
                 HashMap<String,Object> map=new HashMap<>();
 
@@ -115,10 +118,10 @@ public class NewsDao {
                 data.add(map);
             }
             Log.i("aaa",data.toString());
-            return data;
 
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
+            Log.i("aaa","query执行错误");
         } finally {
             if (cursor != null && !cursor.isClosed()) { // &&短路与
                 cursor.close();
@@ -128,7 +131,7 @@ public class NewsDao {
             }
         }
 
-        return null;
+        return data;
     }
     public boolean update(NewsInfo newsInfo) {
         SQLiteDatabase db = null;
@@ -152,11 +155,11 @@ public class NewsDao {
         SQLiteDatabase db = null;
         try {
             db = helper.getReadableDatabase();
-            int rowcount = db.delete("student", null,null);
-            Log.i("StudentDao", rowcount + "---------");
+            int rowcount = db.delete("info", null,null);
+            Log.i("aaa", rowcount + "---------");
             return rowcount > 0;
         } catch (Exception e) {
-            // TODO: handle exception
+            Log.i("aaa","delete删除失败");
         } finally {
             if (db != null && db.isOpen()) {
                 db.close();

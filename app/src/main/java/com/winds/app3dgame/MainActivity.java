@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.winds.app3dgame.adapter.MainFragmentAdapter;
+import com.winds.app3dgame.dao.NewsDao;
 import com.winds.app3dgame.fragment.MainTitleFragment1;
 import com.winds.app3dgame.fragment.MainTitleFragment10;
 import com.winds.app3dgame.fragment.MainTitleFragment2;
@@ -22,6 +23,7 @@ import com.winds.app3dgame.fragment.MainTitleFragment6;
 import com.winds.app3dgame.fragment.MainTitleFragment7;
 import com.winds.app3dgame.fragment.MainTitleFragment8;
 import com.winds.app3dgame.fragment.MainTitleFragment9;
+import com.winds.app3dgame.piccache.CacheManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,6 +168,17 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 
     @Override
     public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NewsDao newsDao=new NewsDao(getApplicationContext());
+        newsDao.deleteAll();
+
+        CacheManager manager=new CacheManager();
+        manager.clear();
 
     }
 }
